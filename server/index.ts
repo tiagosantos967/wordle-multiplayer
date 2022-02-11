@@ -1,7 +1,7 @@
 import express, { Request, Response, Router } from "express";
 import next from "next";
-import { Server } from "socket.io";
 import { createGameService, listGamesService } from "./services/game";
+import { io } from "./utils/io";
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -12,9 +12,6 @@ const port = process.env.PORT || 3000;
   try {
     await app.prepare();
     const server = express();
-
-    const httpServer = require('http').createServer(server)
-    const io = new Server(httpServer, { cors: { origin: '*' }});
 
     const r = (): Router => {
       const router = express.Router();

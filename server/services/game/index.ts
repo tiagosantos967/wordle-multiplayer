@@ -18,11 +18,14 @@ const createGameWithName = (): CreateContextHook<Game> => async (context) => ({
   }
 })
 
-export const createGameService = createService([
-  generateRandomIdHook(),
-  createGameWithName(),
-  createMemoryDao(gamesMemoryDatabase)
-])
+export const createGameService = createService(
+  [
+    generateRandomIdHook(),
+    createGameWithName(),
+    createMemoryDao(gamesMemoryDatabase)
+  ],
+  'game created'
+)
 
 export const listGamesService = listService([
   queryMemoryDao(gamesMemoryDatabase)

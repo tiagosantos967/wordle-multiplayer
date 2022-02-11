@@ -15,17 +15,26 @@ export const useSocket = () => {
       console.log('mount connected')
       setConnectionStatus(SocketConnectionStatus.Connected)
     }
+    socketClient?.on("game created", (data) => {
+      console.log('game created', data);
+    });
+  
+    socketClient?.on("connect", () => {
+      console.log('socket connected', socketClient?.id);
+      setConnectionStatus(SocketConnectionStatus.Connected)
+    });
+  
+    socketClient?.on("disconnect", () => {
+      console.log('socket disconnected', socketClient?.id);
+      setConnectionStatus(SocketConnectionStatus.Disconnected)
+    });
+
+    return () => {
+      socketClient?.off('game created')
+      socketClient?.off('connect')
+      socketClient?.off('disconnect')
+    }
   }, [])
-
-  socketClient?.on("connect", () => {
-    console.log('socket connected', socketClient?.id);
-    setConnectionStatus(SocketConnectionStatus.Connected)
-  });
-
-  socketClient?.on("disconnect", () => {
-    console.log('socket disconnected', socketClient?.id);
-    setConnectionStatus(SocketConnectionStatus.Disconnected)
-  });
 
   return {
     connectionStatus

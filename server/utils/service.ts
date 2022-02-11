@@ -1,4 +1,5 @@
 import { composePromises, Hook } from "./compose";
+import { io } from "./io";
 
 interface CreateContext<T> {
   data: Partial<T>,
@@ -11,9 +12,14 @@ const withCreateContext = <T>(data: Partial<T>): CreateContext<T> => ({
 
 export type CreateContextHook<T> = Hook<CreateContext<T>>;
 
-export const createService = <T>(hooks: Array<CreateContextHook<T>>) => async (data: Partial<T>) => (
-  await (await composePromises(hooks, withCreateContext(data))).result
-)
+export const createService = <T>(
+  hooks: Array<CreateContextHook<T>>,
+  eventName: string,
+) => async (data: Partial<T>) => {
+  const result =  await (await composePromises(hooks, withCreateContext(data))).result;
+  io.emit(eventName, result);
+  return result;
+}
 
 
 interface ContextParams<T> {
