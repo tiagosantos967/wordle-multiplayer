@@ -1,6 +1,7 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, Router } from "express";
 import next from "next";
 import { Server } from "socket.io";
+import { createGameService, listGamesService } from "./services/game";
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -14,6 +15,24 @@ const port = process.env.PORT || 3000;
 
     const httpServer = require('http').createServer(server)
     const io = new Server(httpServer, { cors: { origin: '*' }});
+
+    const r = (): Router => {
+      const router = express.Router();
+
+      router.post('/', async (req, res) => {
+        const result = await createGameService(req.body);
+        res.send(result);
+      })
+
+      router.get('/', async (req, res) => {
+        const result = await listGamesService({});
+        res.send(result);
+      })
+
+      return router;
+    }  
+
+    server.use('/api/game', r())
 
     server.all("*", (req: Request, res: Response) => {
       return handle(req, res);
