@@ -25,12 +25,9 @@ export const routerGenerator = (...args: RouterGenerator): Router  => {
     [RouteMethod.patch]: (route: string, service: RouteService) => router.patch(route, service)
   }[method]);
 
-  console.log('args', args)
   args.forEach((arg) => {
     getRouterMethod(arg.method)(arg.route, arg.service)
   })
-
-  console.log('here')
 
   return router;
 }
