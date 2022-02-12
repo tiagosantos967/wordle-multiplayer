@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 
-import { CreateContextHook } from "./service";
+import { CreateContextHook, IdModel } from "./service";
 
-export const generateRandomIdHook = <T>(): CreateContextHook<T> => async (context) => ({
+export const generateRandomIdHook = <T extends IdModel>(): CreateContextHook<T> => async (context) => ({
   ...context,
   data: {
     ...context.data,

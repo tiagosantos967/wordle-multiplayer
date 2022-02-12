@@ -1,6 +1,6 @@
-import { createMemoryDao, queryMemoryDao } from '../../utils/dao';
+import { createMemoryDao, queryMemoryDao, updateMemoryDao } from '../../utils/dao';
 import { generateRandomIdHook } from '../../utils/hooks';
-import { CreateContextHook, createService, listService } from '../../utils/service';
+import { CreateContextHook, createService, listService, UpdateContextHook, updateService } from '../../utils/service';
 
 const gamesMemoryDatabase: Array<Game> = []; 
 
@@ -18,6 +18,21 @@ const createGameWithName = (): CreateContextHook<Game> => async (context) => ({
   }
 })
 
+const addPlayerToGame = (): UpdateContextHook<Game> => async (context) => {
+  const existing = (await listGamesService({_id: context.params.query._id}))?.data[0];
+
+  return {
+    ...context,
+    data: {
+      ...existing,
+      _players: [
+        ...(existing?._players ? existing._players : []),
+        ...(context.data._players ? context.data._players  : [])
+      ]
+    }
+  }
+}
+
 export const createGameService = createService(
   [
     generateRandomIdHook(),
@@ -27,6 +42,16 @@ export const createGameService = createService(
   'game created'
 )
 
-export const listGamesService = listService([
-  queryMemoryDao(gamesMemoryDatabase)
-]);
+export const listGamesService = listService(
+  [
+    queryMemoryDao(gamesMemoryDatabase)
+  ]
+);
+
+export const joinGameService = updateService(
+  [
+    addPlayerToGame(),
+    updateMemoryDao(gamesMemoryDatabase)
+  ],
+  'game joined'
+)

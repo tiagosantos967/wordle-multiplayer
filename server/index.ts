@@ -1,6 +1,6 @@
 import express, { Request, Response, Router } from "express";
 import next from "next";
-import { createGameService, listGamesService } from "./services/game";
+import { createGameService, joinGameService, listGamesService } from "./services/game";
 import { io } from "./utils/io";
 
 const dev = process.env.NODE_ENV !== "production";
@@ -13,6 +13,8 @@ const port = process.env.PORT || 3000;
     await app.prepare();
     const server = express();
 
+    server.use(express.json());
+
     const r = (): Router => {
       const router = express.Router();
 
@@ -23,6 +25,11 @@ const port = process.env.PORT || 3000;
 
       router.get('/', async (req, res) => {
         const result = await listGamesService({});
+        res.send(result);
+      })
+
+      router.patch('/join/:_id', async (req, res) => {
+        const result = await joinGameService({ _id: req.params._id as string }, req.body);
         res.send(result);
       })
 
