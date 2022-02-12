@@ -1,6 +1,8 @@
 import express, { Request, Response, Router } from "express";
 import next from "next";
 import { createGameService, joinGameService, listGamesService } from "./services/game";
+import { createPlayerService } from "./services/player";
+import { RouteMethod, routerGenerator } from "./utils/controller";
 import { io } from "./utils/io";
 
 const dev = process.env.NODE_ENV !== "production";
@@ -15,28 +17,43 @@ const port = process.env.PORT || 3000;
 
     server.use(express.json());
 
-    const r = (): Router => {
-      const router = express.Router();
+    server.use('/api/game', routerGenerator(
+      {
+        route: '/',
+        method: RouteMethod.post,
+        service: async (req, res) => {
+          const result = await createGameService(req.body);
+          res.send(result);
+        }
+      },
+      {
+        route: '/',
+        method: RouteMethod.get,
+        service: async (req, res) => {
+          const result = await listGamesService(req.query);
+          res.send(result);
+        }
+      },
+      {
+        route: '/join/:_id',
+        method: RouteMethod.patch,
+        service: async (req, res) => {
+          const result = await joinGameService({ _id: req.params._id as string }, req.body);
+          res.send(result);
+        }
+      }
+    ))
 
-      router.post('/', async (req, res) => {
-        const result = await createGameService(req.body);
-        res.send(result);
-      })
-
-      router.get('/', async (req, res) => {
-        const result = await listGamesService({});
-        res.send(result);
-      })
-
-      router.patch('/join/:_id', async (req, res) => {
-        const result = await joinGameService({ _id: req.params._id as string }, req.body);
-        res.send(result);
-      })
-
-      return router;
-    }  
-
-    server.use('/api/game', r())
+    server.use('/api/player', routerGenerator(
+      {
+        route: '/',
+        method: RouteMethod.post,
+        service: async (req, res) => {
+          const result = await createPlayerService(req.body)
+          res.send(result)
+        }
+      }
+    ))
 
     server.all("*", (req: Request, res: Response) => {
       return handle(req, res);
