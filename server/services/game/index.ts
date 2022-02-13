@@ -1,14 +1,9 @@
 import { createMemoryDao, queryMemoryDao, updateMemoryDao } from '../../utils/dao';
 import { generateRandomIdHook } from '../../utils/hooks';
 import { CreateContextHook, createService, listService, UpdateContextHook, updateService } from '../../utils/service';
+import { Game } from './model';
 
 const gamesMemoryDatabase: Array<Game> = []; 
-
-interface Game {
-  _id: string;
-  name: string;
-  _players: Array<string>;
-}
 
 const createGameWithName = (): CreateContextHook<Game> => async (context) => ({
   ...context,

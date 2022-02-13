@@ -1,6 +1,6 @@
-import { createMemoryDao, queryMemoryDao, updateMemoryDao } from '../../utils/dao';
+import { createMemoryDao } from '../../utils/dao';
 import { generateRandomIdHook } from '../../utils/hooks';
-import { CreateContextHook, createService, listService, UpdateContextHook, updateService } from '../../utils/service';
+import { CreateContextHook, createService } from '../../utils/service';
 
 const playersMemoryDatabase: Array<Player> = []; 
 

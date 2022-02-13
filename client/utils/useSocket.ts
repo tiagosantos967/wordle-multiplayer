@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { socketClient } from "./socket";
 
-enum SocketConnectionStatus {
+export enum SocketConnectionStatus {
   Init = 'INIT',
   Connected = 'CONNECTED',
   Disconnected = 'DISCONNECTED',
