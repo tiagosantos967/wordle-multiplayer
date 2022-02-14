@@ -1,32 +1,35 @@
 import type { NextPage } from 'next'
 import Link from 'next/link';
 import React, { useEffect } from 'react';
-import { useCreateGameService } from '../client/services/game';
+import { useCreateGameService, useGameCookie } from '../client/services/game';
 import { composeComponents } from '../client/utils/composeComponents';
 import { withSocketConnection } from '../client/utils/hocs';
 import { ServiceCallStatus } from '../client/utils/hooks';
-import { SocketConnectionStatus, useSocket } from '../client/utils/useSocket';
 import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
-  const { connectionStatus } = useSocket();
-
   const { result, data, callStatus } = useCreateGameService();
+  const { value: gameCookie, set: setGameCookie } = useGameCookie();
 
   useEffect(() => {
-    if(connectionStatus == SocketConnectionStatus.Connected && callStatus == ServiceCallStatus.init){
-      data({});
+    if(callStatus === ServiceCallStatus.success) {
+      setGameCookie(result?._id as string) // FIX!
     }
-  }, [connectionStatus])
+  }, [callStatus])
 
   console.log('result', result, callStatus)
+  console.log('gameCookie', gameCookie)
 
   return (
     <div className={styles.container}>
-      Hello World
-      <Link href="/page2">
-        <a>page2</a>
-      </Link>
+      <p>Hello World</p>
+      <p><Link href="/page2"><a>Go to page2</a></Link></p>
+      {gameCookie 
+        ? <p>Game found! {gameCookie}</p>
+        : <button onClick={() => {
+          data({})
+        }}>generate game</button>
+      }
     </div>
   )
 }
