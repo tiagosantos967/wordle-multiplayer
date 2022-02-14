@@ -3,7 +3,6 @@ import Link from 'next/link';
 import React, { useEffect } from 'react';
 import { useCreateGameService, useGameCookie } from '../client/services/game';
 import { composeComponents } from '../client/utils/composeComponents';
-import { withSocketConnection } from '../client/utils/hocs';
 import { ServiceCallStatus } from '../client/utils/hooks';
 import styles from '../styles/Home.module.css'
 
@@ -25,15 +24,12 @@ const Home: NextPage = () => {
       <p>Hello World</p>
       <p><Link href="/page2"><a>Go to page2</a></Link></p>
       {gameCookie 
-        ? <p>Game found! {gameCookie}</p>
-        : <button onClick={() => {
-          data({})
-        }}>generate game</button>
+        ? <p><Link href={`/game/${gameCookie}`}><a>Go to game {gameCookie}</a></Link></p>
+        : <button onClick={() => data({})}>Generate game</button>
       }
     </div>
   )
 }
 
 export default composeComponents(
-  withSocketConnection()
 )(Home)
