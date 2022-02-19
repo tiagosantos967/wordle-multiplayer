@@ -1,9 +1,10 @@
-import express, { Request, Response, Router } from "express";
+import express, { Request, Response } from "express";
 import next from "next";
-import { createGameService, joinGameService, listGamesService } from "./services/game";
-import { createPlayerService } from "./services/player";
 import { RouteMethod, routerGenerator } from "./utils/controller";
 import { io } from "./utils/io";
+import { createGameService, joinGameService, listGamesService } from "./services/game";
+import { createPlayerService } from "./services/player";
+import { listWordsService } from "./services/word";
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -51,6 +52,17 @@ const port = process.env.PORT || 3000;
         service: async (req, res) => {
           const result = await createPlayerService(req.body)
           res.send(result)
+        }
+      }
+    ))
+
+    server.use('/api/word', routerGenerator(
+      {
+        route: '/',
+        method: RouteMethod.get,
+        service: async (req, res) => {
+          const result = await listWordsService(req.query);
+          res.send(result);
         }
       }
     ))
