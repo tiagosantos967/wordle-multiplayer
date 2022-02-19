@@ -4,7 +4,7 @@ import { RouteMethod, routerGenerator } from "./utils/controller";
 import { io } from "./utils/io";
 import { createGameService, joinGameService, listGamesService } from "./services/game";
 import { createPlayerService } from "./services/player";
-import { listWordsService } from "./services/word";
+import { getRandomWordService, listWordsService } from "./services/word";
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -62,6 +62,14 @@ const port = process.env.PORT || 3000;
         method: RouteMethod.get,
         service: async (req, res) => {
           const result = await listWordsService(req.query);
+          res.send(result);
+        }
+      },
+      {
+        route: '/random',
+        method: RouteMethod.get,
+        service: async (req, res) => {
+          const result = await getRandomWordService(req.query);
           res.send(result);
         }
       }
