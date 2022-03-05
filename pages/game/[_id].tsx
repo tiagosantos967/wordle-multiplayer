@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
+import React from "react";
 import { composeComponents } from "../../client/utils/composeComponents";
-import { withPlayer, withSocketConnection } from "../../client/utils/hocs";
+import { withGame, withPlayer, withQueryParamsHydrated, withSocketConnection } from "../../client/utils/hocs";
 
 const GamePage:React.FC = () => {
   const router = useRouter();
@@ -12,7 +13,12 @@ const GamePage:React.FC = () => {
 }
 
 export default composeComponents(
+  withQueryParamsHydrated(),
   withSocketConnection(),
   withPlayer(),
-  //withPlayerInGame(),
+  withGame(),
+  //withPlayerInGame()
 )(GamePage);
+
+
+ 
