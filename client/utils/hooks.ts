@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { IdModel, ListResult } from "../../server/utils/service";
 
 export enum ServiceCallStatus {
   init,
@@ -27,6 +28,29 @@ export const useCreateService = <T>(serviceUrl: string) => {
   return {
     result,
     data,
+    callStatus
+  }
+}
+
+export const useListService = <T extends IdModel>(serviceUrl: string) => {
+  const [result, setResult] = useState<ListResult<T>>();
+  const [callStatus, setCallStatus] = useState<ServiceCallStatus>(ServiceCallStatus.init);
+
+  const query = async (query: Partial<T>) => {
+    setCallStatus(ServiceCallStatus.inProgress)
+
+    const result = await fetch(
+      serviceUrl + '?' + new URLSearchParams(query as any),
+      { method: 'GET' }
+    )
+    const response = await result.json() as ListResult<T>;
+    setResult(response)
+    setCallStatus(ServiceCallStatus.success)
+  }
+
+  return {
+    result,
+    query,
     callStatus
   }
 }
