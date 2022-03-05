@@ -1,5 +1,4 @@
 import { composePromises, Hook } from "./compose";
-import { io } from "./io";
 
 export interface IdModel {
   _id: string;
@@ -18,24 +17,25 @@ export type CreateContextHook<T extends IdModel> = Hook<CreateContext<T>>;
 
 export const createService = <T extends IdModel>(
   hooks: Array<CreateContextHook<T>>,
-  eventName: string,
+  onCreate?: (result: T) => void,
 ) => async (data: Partial<T>) => {
   const result =  await (await composePromises(hooks, withCreateContext(data))).result;
-  io.emit(eventName, result);
+  onCreate && result && onCreate(result)
   return result;
 }
-
 
 interface ContextParams<T extends IdModel> {
   query: Partial<T>,
 }
 
+export interface ListResult<T extends IdModel> {
+  total: number,
+  data: Array<T>
+}
+
 interface ListContext<T extends IdModel> {
   params: ContextParams<T>,
-  result?: {
-    total: number,
-    data: Array<T>
-  },
+  result?: ListResult<T>,
 }
 
 const withListContext = <T extends IdModel>(query: Partial<T>): ListContext<T> => ({
@@ -52,13 +52,15 @@ export const listService = <T extends IdModel>(
   await (await composePromises(hooks, withListContext(query))).result
 )
 
+export interface UpdateResult<T extends IdModel> {
+  total: number,
+  data: Array<T>
+}
+
 interface UpdateContext<T extends IdModel> {
   params: ContextParams<T>,
   data: Partial<T>,
-  result?: {
-    total: number,
-    data: Array<T>
-  },
+  result?: UpdateResult<T>,
 }
 
 const withUpdateContext = <T extends IdModel>(query: Partial<T>, data: Partial<T>): UpdateContext<T> => ({
@@ -72,9 +74,9 @@ export type UpdateContextHook<T extends IdModel> = Hook<UpdateContext<T>>;
 
 export const updateService = <T extends IdModel>(
   hooks: Array<UpdateContextHook<T>>,
-  eventName: string,
+  onUpdate?: (result: UpdateResult<T>) => void,
 ) => async (query: Partial<T>, data: Partial<T>) => {
   const result = await (await composePromises(hooks, withUpdateContext(query, data))).result;
-  io.emit(eventName, result);
+  onUpdate && result && onUpdate(result)
   return result;
 }

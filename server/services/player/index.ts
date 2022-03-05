@@ -1,5 +1,6 @@
 import { createMemoryDao } from '../../utils/dao';
 import { generateRandomIdHook } from '../../utils/hooks';
+import { io } from '../../utils/io';
 import { CreateContextHook, createService } from '../../utils/service';
 import { Player } from './model';
 
@@ -19,5 +20,5 @@ export const createPlayerService = createService(
     generatePlayerNameIfNone(),
     createMemoryDao(playersMemoryDatabase)
   ],
-  'player created'
+  (result) => io.emit('player created', result)
 )
