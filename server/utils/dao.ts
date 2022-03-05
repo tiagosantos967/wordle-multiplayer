@@ -9,13 +9,14 @@ export const createMemoryDao = <T extends IdModel>(data:Array<T>): CreateContext
 }
 
 export const queryMemoryDao = <T extends IdModel>(data:Array<T>): ListContextHook<T> => async (context) => {
+  const resultData = context.params.query._id 
+    ? data.filter((item) => item._id == context.params.query._id)
+    : data
   return {
     ...context,
     result: {
-      total: data.length,
-      data: context.params.query._id 
-        ? data.filter((item) => item._id == context.params.query._id)
-        : data
+      total: resultData.length,
+      data: resultData
     }
   }
 }
