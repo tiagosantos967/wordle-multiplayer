@@ -8,13 +8,13 @@ export enum SocketConnectionStatus {
 }
 
 export const useSocket = () => {
-  const [connectionStatus, setConnectionStatus] = useState(SocketConnectionStatus.Init)
+  const [connectionStatus, setConnectionStatus] = useState(
+    socketClient?.connected ? SocketConnectionStatus.Connected : SocketConnectionStatus.Init
+  )
+
 
   useEffect(() => {
-    if(socketClient?.connected) {
-      console.log('mount connected')
-      setConnectionStatus(SocketConnectionStatus.Connected)
-    }
+    console.log('mount socket')
     socketClient?.on("game created", (data) => {
       console.log('game created', data);
     });
@@ -30,6 +30,7 @@ export const useSocket = () => {
     });
 
     return () => {
+      console.log('unmounting useSocket')
       socketClient?.off('game created')
       socketClient?.off('connect')
       socketClient?.off('disconnect')
