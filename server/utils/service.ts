@@ -17,10 +17,10 @@ export type CreateContextHook<T extends IdModel> = Hook<CreateContext<T>>;
 
 export const createService = <T extends IdModel>(
   hooks: Array<CreateContextHook<T>>,
-  onCreate?: (result: T) => void,
+  onCreate?: (result: T) => Promise<void>,
 ) => async (data: Partial<T>) => {
   const result =  await (await composePromises(hooks, withCreateContext(data))).result;
-  onCreate && result && onCreate(result)
+  onCreate && result && await onCreate(result)
   return result;
 }
 
@@ -69,9 +69,9 @@ export type UpdateContextHook<T extends IdModel> = Hook<UpdateContext<T>>;
 
 export const updateService = <T extends IdModel>(
   hooks: Array<UpdateContextHook<T>>,
-  onUpdate?: (result: T) => void,
+  onUpdate?: (result: T) => Promise<void>,
 ) => async (query: Partial<T>, data: Partial<T>) => {
   const result = await (await composePromises(hooks, withUpdateContext(query, data))).result;
-  onUpdate && result && onUpdate(result)
+  onUpdate && result && await onUpdate(result)
   return result;
 }

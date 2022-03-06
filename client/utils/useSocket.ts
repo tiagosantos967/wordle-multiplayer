@@ -18,6 +18,10 @@ export const useSocket = () => {
     socketClient?.on("game joined", (data) => {
       console.log('game joined', data);
     });
+
+    socketClient?.on("play created", (data) => {
+      console.log('play created', data);
+    });
   
     socketClient?.on("connect", () => {
       console.log('socket connected', socketClient?.id);
@@ -32,6 +36,7 @@ export const useSocket = () => {
     return () => {
       console.log('unmounting useSocket')
       socketClient?.off('game joined')
+      socketClient?.off('play created')
       socketClient?.off('connect')
       socketClient?.off('disconnect')
     }

@@ -20,5 +20,5 @@ export const createPlayerService = createService(
     generatePlayerNameIfNone(),
     createMemoryDao(playersMemoryDatabase)
   ],
-  (result) => io.emit('player created', result)
+  async (result) => { io.emit('player created', result) }
 )

@@ -5,6 +5,7 @@ import { io } from "./utils/io";
 import { createGameService, joinGameService, listGamesService } from "./services/game";
 import { createPlayerService } from "./services/player";
 import { getRandomWordService, listWordsService } from "./services/word";
+import { createPlayService } from "./services/play";
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -71,6 +72,17 @@ const port = process.env.PORT || 3000;
         service: async (req, res) => {
           const result = await getRandomWordService(req.query);
           res.send(result);
+        }
+      }
+    ))
+
+    server.use('/api/play', routerGenerator(
+      {
+        route: '/',
+        method: RouteMethod.post,
+        service: async (req, res) => {
+          const result = await createPlayService(req.body)
+          res.send(result)
         }
       }
     ))

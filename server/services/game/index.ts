@@ -27,9 +27,9 @@ export const joinGameService = updateService(
     addPlayerToGame(),
     updateMemoryDao(gamesMemoryDatabase)
   ],
-  (result) => {
+  async (result) => {
     getConnectedSockets()
-      .filter((socket) => socket._whoami && result._players.includes(socket._whoami))
+      .filter((socket) => socket._whoami && result._players?.includes(socket._whoami))
       .forEach((socket) => socket.emit('game joined', result))
   }
 )
