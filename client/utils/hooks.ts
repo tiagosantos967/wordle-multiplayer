@@ -54,3 +54,31 @@ export const useListService = <T extends IdModel>(serviceUrl: string) => {
     callStatus
   }
 }
+
+export const useGetService = <T extends IdModel>(serviceUrl: string) => {
+  const [result, setResult] = useState<T>();
+  const [callStatus, setCallStatus] = useState<ServiceCallStatus>(ServiceCallStatus.init);
+
+  const get = async (_id: string) => {
+    setCallStatus(ServiceCallStatus.inProgress)
+
+    const result = await fetch(
+      serviceUrl + '/' + _id,
+      { method: 'GET' }
+    )
+
+    try { // FIX
+      const response = await result.json() as T | undefined;
+      setResult(response)
+    } catch (error) {
+      setResult(undefined)
+    }
+    setCallStatus(ServiceCallStatus.success)
+  }
+
+  return {
+    result,
+    get,
+    callStatus
+  }
+}

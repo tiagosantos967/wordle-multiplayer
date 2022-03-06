@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useCreateGameService, useGameCookie, useListGameService } from "../services/game";
+import { useCreateGameService, useGameCookie, useGetGameService } from "../services/game";
 import { useCreatePlayerService, usePlayerCookie } from "../services/player";
 import { HOC } from "./composeComponents";
-import { ServiceCallStatus } from "./hooks";
+import { ServiceCallStatus, useGetService } from "./hooks";
 import { SocketConnectionStatus, useSocket } from "./useSocket";
 
 export const withQueryParamsHydrated = ():HOC => (Component) => (props) => {
@@ -58,23 +58,23 @@ export const withPlayer = ():HOC => (Component) => (props) => {
 
 export const withGame = ():HOC => (Component) => (props) => {
   const { data, result: createResult, callStatus: createCallStatus } = useCreateGameService();
-  const { query, result: listResult, callStatus: listCallStatus } = useListGameService();
+  const { get, result: getResult, callStatus: getCallStatus } = useGetGameService();
   const { set: setGameCookie } = useGameCookie();
   const [ gameExists, setGameExists] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    query({_id: router.query._id as string})
+    get(router.query._id as string)
   }, [])
 
   useEffect(() => {
-    if(listCallStatus == ServiceCallStatus.success && listResult?.total == 1) {
+    if(getCallStatus == ServiceCallStatus.success && getResult) {
       setGameExists(true)
-      setGameCookie(listResult?.data[0]._id as string) // FIX
+      setGameCookie(getResult._id as string) // FIX
     } else {
       setGameExists(false)
     }
-  }, [listCallStatus])
+  }, [getCallStatus])
 
   useEffect(() => {
     if(createCallStatus == ServiceCallStatus.success) {
@@ -83,7 +83,7 @@ export const withGame = ():HOC => (Component) => (props) => {
     }
   }, [createCallStatus])
 
-  if([ServiceCallStatus.init, ServiceCallStatus.inProgress].includes(listCallStatus)) {
+  if([ServiceCallStatus.init, ServiceCallStatus.inProgress].includes(getCallStatus)) {
     return <p>Finding game...</p>
   }
 
