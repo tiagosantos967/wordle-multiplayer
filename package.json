@@ -11,6 +11,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@material-ui/core": "^4.12.3",
     "express": "^4.17.2",
     "js-cookie": "^3.0.1",
     "mongoose": "^6.2.1",
