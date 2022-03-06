@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useCreateGameService, useGameCookie, useGetGameService } from "../services/game";
+import { useCreateGameService, useGameCookie, useGetGameService, useJoinGameService } from "../services/game";
 import { useCreatePlayerService, usePlayerCookie } from "../services/player";
 import { HOC } from "./composeComponents";
 import { ServiceCallStatus, useGetService } from "./hooks";
@@ -92,6 +92,57 @@ export const withGame = ():HOC => (Component) => (props) => {
       <div>
         <p>Game does not exist</p>
         <button onClick={() => data({})}>Create a new one</button>
+      </div>
+    )
+  }
+
+  return React.createElement(Component, props) 
+}
+
+export const withPlayerInGame = ():HOC => (Component) => (props) => {
+  const { get: getGame, result: getGameResult, callStatus: getGameCallStatus } = useGetGameService();
+  const { update: joinGame, result: joinGameResult, callStatus: joinGameCallStatus } = useJoinGameService();
+  const { value: playerCookie } = usePlayerCookie();
+  const { value: gameCookie } = useGameCookie();
+  const [playerInGame, setPlayerInGame] = useState(false);
+
+  useEffect(() => {
+    if(gameCookie){
+      getGame(gameCookie)
+    }
+  }, [gameCookie])
+
+  useEffect(() => {
+    if(getGameCallStatus == ServiceCallStatus.success) {
+      if(getGameResult && playerCookie && getGameResult._players?.includes(playerCookie)){
+        setPlayerInGame(true)
+      }
+    } else {
+      setPlayerInGame(false)
+    }
+  }, [getGameCallStatus])
+
+  useEffect(() => {
+    if(joinGameCallStatus == ServiceCallStatus.success) {
+      setPlayerInGame(true)
+    } else {
+      setPlayerInGame(false)
+    }
+  }, [joinGameCallStatus])
+
+  if([ServiceCallStatus.init, ServiceCallStatus.inProgress].includes(getGameCallStatus)) {
+    return <p>Checking game status...</p>
+  }
+
+  if(!gameCookie || !playerCookie) {
+    return <p>There was an error. Game or Player cookie not ser</p>
+  }
+
+  if(!playerInGame) {
+    return (
+      <div>
+        <p>Would you like to join this session?</p>
+        <button onClick={() => joinGame(gameCookie, {_players: [playerCookie]})}>Join</button>
       </div>
     )
   }
