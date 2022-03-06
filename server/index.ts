@@ -3,7 +3,7 @@ import next from "next";
 import { RouteMethod, routerGenerator } from "./utils/controller";
 import { io } from "./utils/io";
 import { createGameService, getGameService, joinGameService, listGamesService, updateGameService } from "./services/game";
-import { createPlayerService } from "./services/player";
+import { createPlayerService, getPlayerService } from "./services/player";
 import { getRandomWordService, listWordsService } from "./services/word";
 import { createPlayService } from "./services/play";
 
@@ -70,7 +70,15 @@ const port = process.env.PORT || 3000;
           const result = await createPlayerService(req.body)
           res.send(result)
         }
-      }
+      },
+      {
+        route: '/:_id',
+        method: RouteMethod.get,
+        service: async (req, res) => {
+          const result = await getPlayerService({ _id: req.params._id as string });
+          res.send(result);
+        }
+      },
     ))
 
     server.use('/api/word', routerGenerator(

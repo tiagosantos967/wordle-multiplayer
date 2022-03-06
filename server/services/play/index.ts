@@ -1,7 +1,7 @@
-import { createMemoryDao } from "../../utils/dao";
+import { createMemoryDao, findMemoryDao } from "../../utils/dao";
 import { updateSelectedSockets } from "../../utils/events";
 import { generateRandomIdHook } from "../../utils/hooks";
-import { createService } from "../../utils/service";
+import { createService, getService } from "../../utils/service";
 import { listGamesService } from "../game";
 import { updateGameWithPlay } from "./hooks";
 import { Play } from "./model";
@@ -18,4 +18,10 @@ export const createPlayService = createService(
     async (result) => (await listGamesService({_id: result._game}))?.data[0]?._players,
     'play created'
   )
+)
+
+export const getPlayService = getService(
+  [
+    findMemoryDao<Play>(playsMemoryDatabase),
+  ]
 )
