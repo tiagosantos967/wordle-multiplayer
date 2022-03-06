@@ -1,17 +1,23 @@
-import { useRouter } from "next/router";
-import React from "react";
-import { useGameCookie } from "../../client/services/game";
+import React, { useEffect } from "react";
+import { useGameCookie, useGetGameService } from "../../client/services/game";
 import { composeComponents } from "../../client/utils/composeComponents";
 import { withGame, withPlayer, withPlayerInGame, withQueryParamsHydrated, withSocketConnection } from "../../client/utils/hocs";
-import { useSocket } from "../../client/utils/useSocket";
 
 const GamePage:React.FC = () => {
   const { value: gameCookie } = useGameCookie();
-  
-  useSocket(['game updated', (data) => console.log('game updated event with', data)])
+  const { get: getGame, result: getGameResult } = useGetGameService();
+
+  useEffect(() => {
+    if(gameCookie){
+      getGame(gameCookie)
+    }
+  }, [gameCookie])
 
   return (
-    <div>Welcome to game {gameCookie}</div>
+    <>
+      <div>Welcome to game {gameCookie}</div>
+      <div>{JSON.stringify(getGameResult)}</div>
+    </>
   )
 }
 

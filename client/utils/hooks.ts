@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { IdModel, ListResult } from "../../server/utils/service";
+import { generateSocketListeners, useSocket } from "./useSocket";
 
 export enum ServiceCallStatus {
   init,
@@ -55,9 +56,22 @@ export const useListService = <T extends IdModel>(serviceUrl: string) => {
   }
 }
 
-export const useGetService = <T extends IdModel>(serviceUrl: string) => {
+export const useGetService = <T extends IdModel>(serviceUrl: string, eventName?: string) => {
   const [result, setResult] = useState<T>();
   const [callStatus, setCallStatus] = useState<ServiceCallStatus>(ServiceCallStatus.init);
+
+  const updateResult = (data: T) => {
+    if(eventName && data._id === result?._id) {
+      setResult(data)
+    }
+  };
+
+  useSocket(
+    generateSocketListeners(
+      [eventName, updateResult]
+    ),
+    [result?._id]
+  )
 
   const get = async (_id: string) => {
     setCallStatus(ServiceCallStatus.inProgress)

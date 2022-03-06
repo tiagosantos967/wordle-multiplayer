@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useCreateGameService, useGameCookie, useGetGameService, useJoinGameService } from "../services/game";
 import { useCreatePlayerService, usePlayerCookie } from "../services/player";
 import { HOC } from "./composeComponents";
-import { ServiceCallStatus, useGetService } from "./hooks";
+import { ServiceCallStatus } from "./hooks";
 import { SocketConnectionStatus, useSocket } from "./useSocket";
 
 export const withQueryParamsHydrated = ():HOC => (Component) => (props) => {
