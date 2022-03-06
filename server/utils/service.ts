@@ -75,3 +75,23 @@ export const updateService = <T extends IdModel>(
   onUpdate && result && await onUpdate(result)
   return result;
 }
+
+interface GetContext<T extends IdModel> {
+  params: ContextParams<T>,
+  result?: T,
+}
+
+const withGetContext = <T extends IdModel>(query: Partial<T>): GetContext<T> => ({
+  params: {
+    query
+  },
+})
+
+export type GetContextHook<T extends IdModel> = Hook<GetContext<T>>;
+
+export const getService = <T extends IdModel>(
+  hooks: Array<GetContextHook<T>>,
+) => async (query: Partial<T>) => {
+  const result = await (await composePromises(hooks, withGetContext(query))).result;
+  return result;
+}

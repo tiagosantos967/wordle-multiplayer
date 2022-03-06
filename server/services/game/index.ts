@@ -1,7 +1,7 @@
-import { createMemoryDao, queryMemoryDao, updateMemoryDao } from '../../utils/dao';
+import { createMemoryDao, findMemoryDao, queryMemoryDao, updateMemoryDao } from '../../utils/dao';
 import { updateSelectedSockets } from '../../utils/events';
 import { generateRandomIdHook } from '../../utils/hooks';
-import { createService, listService, updateService } from '../../utils/service';
+import { createService, getService, listService, updateService } from '../../utils/service';
 import { addPlayerToGame, addWordToGame, createGameWithName } from './hooks';
 import { Game } from './model';
 
@@ -19,6 +19,12 @@ export const createGameService = createService(
 export const listGamesService = listService(
   [
     queryMemoryDao(gamesMemoryDatabase)
+  ]
+);
+
+export const getGameService = getService(
+  [
+    findMemoryDao(gamesMemoryDatabase)
   ]
 );
 

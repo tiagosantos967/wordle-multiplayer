@@ -1,4 +1,4 @@
-import { CreateContextHook, IdModel, ListContextHook, UpdateContextHook } from "./service"
+import { CreateContextHook, GetContextHook, IdModel, ListContextHook, UpdateContextHook } from "./service"
 
 export const createMemoryDao = <T extends IdModel>(data:Array<T>): CreateContextHook<T> => async (context) => {
   data.push(context.data as Required<T>)
@@ -36,5 +36,12 @@ export const updateMemoryDao = <T extends IdModel>(data:Array<T>): UpdateContext
   return {
     ...context,
     result: updated[0] as T
+  }
+}
+
+export const findMemoryDao = <T extends IdModel>(data:Array<T>): GetContextHook<T> => async (context) => {
+  return {
+    ...context,
+    result: data.find((item) => item._id == context.params.query._id)
   }
 }

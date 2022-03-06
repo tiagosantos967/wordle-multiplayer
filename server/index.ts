@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import next from "next";
 import { RouteMethod, routerGenerator } from "./utils/controller";
 import { io } from "./utils/io";
-import { createGameService, joinGameService, listGamesService } from "./services/game";
+import { createGameService, getGameService, joinGameService, listGamesService } from "./services/game";
 import { createPlayerService } from "./services/player";
 import { getRandomWordService, listWordsService } from "./services/word";
 import { createPlayService } from "./services/play";
@@ -33,6 +33,14 @@ const port = process.env.PORT || 3000;
         method: RouteMethod.get,
         service: async (req, res) => {
           const result = await listGamesService(req.query);
+          res.send(result);
+        }
+      },
+      {
+        route: '/:_id',
+        method: RouteMethod.get,
+        service: async (req, res) => {
+          const result = await getGameService({ _id: req.params._id as string });
           res.send(result);
         }
       },
