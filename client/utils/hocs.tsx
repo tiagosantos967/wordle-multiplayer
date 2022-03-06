@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { SimpleCardPageTemplate } from "../../components/templates/SimpleCardPageTemplate";
 import { useCreateGameService, useGameCookie, useGetGameService, useJoinGameService } from "../services/game";
 import { useCreatePlayerService, useGetPlayerService, usePlayerCookie } from "../services/player";
 import { HOC } from "./composeComponents";
@@ -62,10 +63,12 @@ export const withPlayer = ():HOC => (Component) => (props) => {
 
   if(!playerExists) {
     return (
-      <div>
-        <p>Create a player account:</p>
-        <button onClick={() => data({})}>Create an acount</button>
-      </div>
+      <SimpleCardPageTemplate
+        title="⚽️ Create a player"
+        subTitle="Click here to create a new player account."
+        buttonText="Create a new player"
+        onClick={() => data({})}
+      />
     )
   }
 
@@ -105,10 +108,12 @@ export const withGame = ():HOC => (Component) => (props) => {
 
   if(!gameExists) {
     return (
-      <div>
-        <p>Game does not exist</p>
-        <button onClick={() => data({})}>Create a new one</button>
-      </div>
+      <SimpleCardPageTemplate
+        title="✖️ Game not found"
+        subTitle="You are trying to join a game that does not exist. Or has been deleted. It is time to create a new one"
+        buttonText="Create a new one"
+        onClick={() => data({})}
+      />
     )
   }
 
@@ -156,10 +161,12 @@ export const withPlayerInGame = ():HOC => (Component) => (props) => {
 
   if(!playerInGame) {
     return (
-      <div>
-        <p>Would you like to join this session?</p>
-        <button onClick={() => joinGame(gameCookie, {_players: [playerCookie]})}>Join</button>
-      </div>
+      <SimpleCardPageTemplate
+        title="🏁 Ready, set, go!"
+        subTitle="Click start when you are ready to join the room"
+        buttonText="Start"
+        onClick={() => joinGame(gameCookie, {_players: [playerCookie]})}
+      />
     )
   }
 
