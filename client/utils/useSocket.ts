@@ -15,8 +15,8 @@ export const useSocket = () => {
 
   useEffect(() => {
     console.log('mount socket')
-    socketClient?.on("game created", (data) => {
-      console.log('game created', data);
+    socketClient?.on("game joined", (data) => {
+      console.log('game joined', data);
     });
   
     socketClient?.on("connect", () => {
@@ -31,13 +31,14 @@ export const useSocket = () => {
 
     return () => {
       console.log('unmounting useSocket')
-      socketClient?.off('game created')
+      socketClient?.off('game joined')
       socketClient?.off('connect')
       socketClient?.off('disconnect')
     }
   }, [])
 
   return {
-    connectionStatus
+    connectionStatus,
+    sendWhoAmI: (_id: string) =>  socketClient?.emit('who-am-i', _id)
   }
 }

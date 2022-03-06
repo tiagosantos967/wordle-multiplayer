@@ -30,12 +30,19 @@ export const withSocketConnection = ():HOC => (Component) => (props) => {
 export const withPlayer = ():HOC => (Component) => (props) => {
   const { data, result, callStatus } = useCreatePlayerService();
   const { value: playerCookie, set: setPlayerCookie } = usePlayerCookie();
+  const { sendWhoAmI } = useSocket();
 
   useEffect(() => {
     if(callStatus === ServiceCallStatus.success) {
       setPlayerCookie(result?._id as string) // FIX!
     }
   }, [callStatus])
+
+  useEffect(() => {
+    if(playerCookie) {
+      sendWhoAmI(playerCookie)
+    }
+  }, [playerCookie])
 
   if(!playerCookie) {
     return (
@@ -63,6 +70,7 @@ export const withGame = ():HOC => (Component) => (props) => {
   useEffect(() => {
     if(listCallStatus == ServiceCallStatus.success && listResult?.total == 1) {
       setGameExists(true)
+      setGameCookie(listResult?.data[0]._id as string) // FIX
     } else {
       setGameExists(false)
     }
