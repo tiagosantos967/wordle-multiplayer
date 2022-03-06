@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useCreateGameService, useGameCookie, useGetGameService, useJoinGameService } from "../services/game";
-import { useCreatePlayerService, usePlayerCookie } from "../services/player";
+import { useCreatePlayerService, useGetPlayerService, usePlayerCookie } from "../services/player";
 import { HOC } from "./composeComponents";
 import { ServiceCallStatus } from "./hooks";
 import { SocketConnectionStatus, useSocket } from "./useSocket";
@@ -28,23 +28,39 @@ export const withSocketConnection = ():HOC => (Component) => (props) => {
 } 
 
 export const withPlayer = ():HOC => (Component) => (props) => {
-  const { data, result, callStatus } = useCreatePlayerService();
+  const { data, result: createResult, callStatus: createCallStatus } = useCreatePlayerService();
+  const { get, result: getResult, callStatus: getCallStatus } = useGetPlayerService();
   const { value: playerCookie, set: setPlayerCookie } = usePlayerCookie();
+  const [ playerExists, setPlayerExists] = useState(false);
   const { sendWhoAmI } = useSocket();
 
   useEffect(() => {
-    if(callStatus === ServiceCallStatus.success) {
-      setPlayerCookie(result?._id as string) // FIX!
+    if(playerCookie){
+      get(playerCookie)
+    } else {
+      setPlayerExists(false)
     }
-  }, [callStatus])
+  }, [])
 
   useEffect(() => {
-    if(playerCookie) {
-      sendWhoAmI(playerCookie)
+    if(getCallStatus == ServiceCallStatus.success && getResult){
+      setPlayerCookie(getResult._id)
+      setPlayerExists(true)
+      sendWhoAmI(getResult._id)
+    } else {
+      setPlayerExists(false)
     }
-  }, [playerCookie])
+  }, [getCallStatus])
 
-  if(!playerCookie) {
+  useEffect(() => {
+    if(createCallStatus == ServiceCallStatus.success && createResult){
+      setPlayerCookie(createResult._id)
+      setPlayerExists(true)
+      sendWhoAmI(createResult._id)
+    }
+  }, [createCallStatus])
+
+  if(!playerExists) {
     return (
       <div>
         <p>Create a player account:</p>

@@ -1,8 +1,8 @@
 import { createMemoryDao, findMemoryDao, queryMemoryDao, updateMemoryDao } from '../../utils/dao';
 import { updateSelectedSockets } from '../../utils/events';
 import { generateRandomIdHook } from '../../utils/hooks';
-import { createService, getService, listService, updateService } from '../../utils/service';
-import { addPlayerToGame, addWordToGame, createGameWithName } from './hooks';
+import { createService, GetContextHook, getService, listService, UpdateContextHook, updateService } from '../../utils/service';
+import { addPlayerToGame, addWordToGame, createGameWithName, populatePlayers, populatePlays } from './hooks';
 import { Game } from './model';
 
 const gamesMemoryDatabase: Array<Game> = []; 
@@ -24,13 +24,17 @@ export const listGamesService = listService(
 
 export const getGameService = getService(
   [
-    findMemoryDao(gamesMemoryDatabase)
+    findMemoryDao(gamesMemoryDatabase),
+    populatePlayers() as GetContextHook<Game>,
+    populatePlays() as GetContextHook<Game>,
   ]
 );
 
 export const updateGameService = updateService(
   [
-    updateMemoryDao(gamesMemoryDatabase)
+    updateMemoryDao(gamesMemoryDatabase),
+    populatePlayers() as UpdateContextHook<Game>,
+    populatePlays() as UpdateContextHook<Game>,
   ],
   updateSelectedSockets(
     async (result) => result._players,

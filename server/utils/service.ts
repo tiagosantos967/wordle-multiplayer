@@ -4,12 +4,14 @@ export interface IdModel {
   _id: string;
 }
 
-interface CreateContext<T extends IdModel> {
+export interface CreateContext<T extends IdModel> {
+  type: 'CREATE',
   data: Partial<T>,
   result?: T,
 }
 
 const withCreateContext = <T extends IdModel>(data: Partial<T>): CreateContext<T> => ({
+  type: 'CREATE',
   data,
 })
 
@@ -33,12 +35,14 @@ export interface ListResult<T extends IdModel> {
   data: Array<T>
 }
 
-interface ListContext<T extends IdModel> {
+export interface ListContext<T extends IdModel> {
+  type: 'LIST',
   params: ContextParams<T>,
   result?: ListResult<T>,
 }
 
 const withListContext = <T extends IdModel>(query: Partial<T>): ListContext<T> => ({
+  type: 'LIST',
   params: {
     query
   }
@@ -52,13 +56,15 @@ export const listService = <T extends IdModel>(
   await (await composePromises(hooks, withListContext(query))).result
 )
 
-interface UpdateContext<T extends IdModel> {
+export interface UpdateContext<T extends IdModel> {
+  type: 'UPDATE',
   params: ContextParams<T>,
   data: Partial<T>,
   result?: T,
 }
 
 const withUpdateContext = <T extends IdModel>(query: Partial<T>, data: Partial<T>): UpdateContext<T> => ({
+  type: 'UPDATE',
   params: {
     query
   },
@@ -76,12 +82,14 @@ export const updateService = <T extends IdModel>(
   return result;
 }
 
-interface GetContext<T extends IdModel> {
+export interface GetContext<T extends IdModel> {
+  type: 'GET',
   params: ContextParams<T>,
   result?: T,
 }
 
 const withGetContext = <T extends IdModel>(query: Partial<T>): GetContext<T> => ({
+  type: 'GET',
   params: {
     query
   },
