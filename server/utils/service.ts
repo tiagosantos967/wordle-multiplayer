@@ -52,15 +52,10 @@ export const listService = <T extends IdModel>(
   await (await composePromises(hooks, withListContext(query))).result
 )
 
-export interface UpdateResult<T extends IdModel> {
-  total: number,
-  data: Array<T>
-}
-
 interface UpdateContext<T extends IdModel> {
   params: ContextParams<T>,
   data: Partial<T>,
-  result?: UpdateResult<T>,
+  result?: T,
 }
 
 const withUpdateContext = <T extends IdModel>(query: Partial<T>, data: Partial<T>): UpdateContext<T> => ({
@@ -74,7 +69,7 @@ export type UpdateContextHook<T extends IdModel> = Hook<UpdateContext<T>>;
 
 export const updateService = <T extends IdModel>(
   hooks: Array<UpdateContextHook<T>>,
-  onUpdate?: (result: UpdateResult<T>) => void,
+  onUpdate?: (result: T) => void,
 ) => async (query: Partial<T>, data: Partial<T>) => {
   const result = await (await composePromises(hooks, withUpdateContext(query, data))).result;
   onUpdate && result && onUpdate(result)

@@ -35,9 +35,6 @@ export const updateMemoryDao = <T extends IdModel>(data:Array<T>): UpdateContext
 
   return {
     ...context,
-    result: {
-      total: updated.length,
-      data: updated as T[]
-    }
+    result: updated[0] as T
   }
 }
