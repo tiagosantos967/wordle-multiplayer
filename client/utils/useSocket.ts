@@ -15,8 +15,8 @@ export const useSocket = () => {
 
   useEffect(() => {
     console.log('mount socket')
-    socketClient?.on("game joined", (data) => {
-      console.log('game joined', data);
+    socketClient?.on("game updated", (data) => {
+      console.log('game updated', data);
     });
 
     socketClient?.on("play created", (data) => {
@@ -35,7 +35,7 @@ export const useSocket = () => {
 
     return () => {
       console.log('unmounting useSocket')
-      socketClient?.off('game joined')
+      socketClient?.off('game updated')
       socketClient?.off('play created')
       socketClient?.off('connect')
       socketClient?.off('disconnect')

@@ -28,6 +28,16 @@ export const getGameService = getService(
   ]
 );
 
+export const updateGameService = updateService(
+  [
+    updateMemoryDao(gamesMemoryDatabase)
+  ],
+  updateSelectedSockets(
+    async (result) => result._players,
+    'game updated'
+  )
+)
+
 export const joinGameService = updateService(
   [
     addPlayerToGame(),
@@ -35,6 +45,6 @@ export const joinGameService = updateService(
   ],
   updateSelectedSockets(
     async (result) => result._players,
-    'game joined'
+    'game updated'
   )
 )
