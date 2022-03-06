@@ -7,21 +7,18 @@ export enum SocketConnectionStatus {
   Disconnected = 'DISCONNECTED',
 }
 
-export const useSocket = () => {
+type UseSocketListener<T> = [string, (result: T) => void];
+
+export const useSocket = <T>(...listeners: Array<UseSocketListener<T>>) => {
   const [connectionStatus, setConnectionStatus] = useState(
     socketClient?.connected ? SocketConnectionStatus.Connected : SocketConnectionStatus.Init
   )
 
-
   useEffect(() => {
     console.log('mount socket')
-    socketClient?.on("game updated", (data) => {
-      console.log('game updated', data);
-    });
-
-    socketClient?.on("play created", (data) => {
-      console.log('play created', data);
-    });
+    listeners.forEach(([event, callback]) => {
+      socketClient?.on(event, callback)
+    })
   
     socketClient?.on("connect", () => {
       console.log('socket connected', socketClient?.id);
@@ -35,8 +32,9 @@ export const useSocket = () => {
 
     return () => {
       console.log('unmounting useSocket')
-      socketClient?.off('game updated')
-      socketClient?.off('play created')
+      listeners.forEach(([event]) => {
+        socketClient?.off(event)
+      })
       socketClient?.off('connect')
       socketClient?.off('disconnect')
     }

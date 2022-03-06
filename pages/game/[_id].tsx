@@ -1,14 +1,17 @@
 import { useRouter } from "next/router";
 import React from "react";
+import { useGameCookie } from "../../client/services/game";
 import { composeComponents } from "../../client/utils/composeComponents";
 import { withGame, withPlayer, withPlayerInGame, withQueryParamsHydrated, withSocketConnection } from "../../client/utils/hocs";
+import { useSocket } from "../../client/utils/useSocket";
 
 const GamePage:React.FC = () => {
-  const router = useRouter();
-  const { _id } = router.query;
+  const { value: gameCookie } = useGameCookie();
+  
+  useSocket(['game updated', (data) => console.log('game updated event with', data)])
 
   return (
-    <div>Welcome to game {_id}</div>
+    <div>Welcome to game {gameCookie}</div>
   )
 }
 
