@@ -82,3 +82,31 @@ export const useGetService = <T extends IdModel>(serviceUrl: string) => {
     callStatus
   }
 }
+
+export const useUpdateService = <T extends IdModel>(serviceUrl: string) => {
+  const [result, setResult] = useState<T>();
+  const [callStatus, setCallStatus] = useState<ServiceCallStatus>(ServiceCallStatus.init);
+
+  const update = async (_id: string, data: Partial<T>) => {
+    setCallStatus(ServiceCallStatus.inProgress)
+
+    const result = await fetch(
+      serviceUrl + '/' + _id,
+      { method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) }
+    )
+
+    try { // FIX
+      const response = await result.json() as T | undefined;
+      setResult(response)
+    } catch (error) {
+      setResult(undefined)
+    }
+    setCallStatus(ServiceCallStatus.success)
+  }
+
+  return {
+    result,
+    update,
+    callStatus
+  }
+}
