@@ -1,6 +1,6 @@
 import { createMemoryDao, queryMemoryDao, updateMemoryDao } from '../../utils/dao';
 import { generateRandomIdHook } from '../../utils/hooks';
-import { io } from '../../utils/io';
+import { getConnectedSockets } from '../../utils/io';
 import { createService, listService, updateService } from '../../utils/service';
 import { addPlayerToGame, addWordToGame, createGameWithName } from './hooks';
 import { Game } from './model';
@@ -13,8 +13,7 @@ export const createGameService = createService(
     createGameWithName(),
     addWordToGame(),
     createMemoryDao(gamesMemoryDatabase)
-  ],
-  (result) => io.emit('game created', result)
+  ]
 )
 
 export const listGamesService = listService(
@@ -28,5 +27,9 @@ export const joinGameService = updateService(
     addPlayerToGame(),
     updateMemoryDao(gamesMemoryDatabase)
   ],
-  (result) => io.emit('game joined', result)
+  (result) => {
+    getConnectedSockets()
+      .filter((socket) => socket._whoami && result._players.includes(socket._whoami))
+      .forEach((socket) => socket.emit('game joined', result))
+  }
 )

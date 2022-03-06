@@ -15,8 +15,8 @@ const GamePage:React.FC = () => {
 export default composeComponents(
   withQueryParamsHydrated(),
   withSocketConnection(),
-  withPlayer(),
   withGame(),
+  withPlayer(),
   //withPlayerInGame()
 )(GamePage);
 
