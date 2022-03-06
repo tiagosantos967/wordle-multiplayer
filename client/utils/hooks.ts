@@ -18,7 +18,7 @@ export const useCreateService = <T>(serviceUrl: string) => {
 
     const result = await fetch(
       serviceUrl,
-      { method: 'POST', body: JSON.stringify(data)}
+      { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)}
     )
     const response = await result.json();
 

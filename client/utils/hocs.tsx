@@ -135,7 +135,7 @@ export const withPlayerInGame = ():HOC => (Component) => (props) => {
   }
 
   if(!gameCookie || !playerCookie) {
-    return <p>There was an error. Game or Player cookie not ser</p>
+    return <p>There was an error. Game or Player cookie not set</p>
   }
 
   if(!playerInGame) {
