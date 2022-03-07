@@ -1,9 +1,15 @@
 import React, { useEffect } from "react";
-import { useGameCookie, useGetGameService } from "../../client/services/game";
-import { useCreatePlayService } from "../../client/services/play";
-import { usePlayerCookie } from "../../client/services/player";
-import { composeComponents } from "../../client/utils/composeComponents";
-import { withGame, withPlayer, withPlayerInGame, withQueryParamsHydrated, withSocketConnection } from "../../client/utils/hocs";
+import { useGameCookie, useGetGameService } from "../../../client/services/game";
+import { useCreatePlayService } from "../../../client/services/play";
+import { usePlayerCookie } from "../../../client/services/player";
+import { composeComponents } from "../../../client/utils/composeComponents";
+import {
+  withGame,
+  withPlayer,
+  withPlayerInGame,
+  withQueryParamsHydrated,
+  withSocketConnection
+} from "../../../client/utils/hocs";
 
 const GamePage:React.FC = () => {
   const { value: gameCookie } = useGameCookie();
