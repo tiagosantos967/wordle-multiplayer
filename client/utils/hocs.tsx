@@ -1,6 +1,8 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { TextField } from "../../components/molecules/Form";
 import { SimpleCardPageTemplate } from "../../components/templates/SimpleCardPageTemplate";
+import { SimpleFormCardPageTemplate } from "../../components/templates/SimpleFormCardPageTemplate";
 import { useCreateGameService, useGameCookie, useGetGameService, useJoinGameService } from "../services/game";
 import { useCreatePlayerService, useGetPlayerService, usePlayerCookie } from "../services/player";
 import { HOC } from "./composeComponents";
@@ -63,12 +65,19 @@ export const withPlayer = ():HOC => (Component) => (props) => {
 
   if(!playerExists) {
     return (
-      <SimpleCardPageTemplate
+      <SimpleFormCardPageTemplate<{username: string}>
         title="⚽️ Create a player"
         subTitle="Click here to create a new player account."
         buttonText="Create a new player"
-        onClick={() => data({})}
-      />
+        onSubmit={({username}) => {data({ name: username})}}
+        initialValues={{ username: '' }}
+      >
+        <TextField
+          name="username"
+          label="Your username"
+          fullWidth
+        />
+      </SimpleFormCardPageTemplate>
     )
   }
 
