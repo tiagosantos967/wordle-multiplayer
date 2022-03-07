@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import next from "next";
 import { RouteMethod, routerGenerator } from "./utils/controller";
-import { io } from "./utils/io";
+import { server, app as expressApp } from "./utils/io";
 import { createGameService, getGameService, joinGameService, listGamesService, updateGameService } from "./services/game";
 import { createPlayerService, getPlayerService } from "./services/player";
 import { getRandomWordService, listWordsService } from "./services/word";
@@ -15,11 +15,10 @@ const port = process.env.PORT || 3000;
 (async () => {
   try {
     await app.prepare();
-    const server = express();
 
-    server.use(express.json());
+    expressApp.use(express.json());
 
-    server.use('/api/game', routerGenerator(
+    expressApp.use('/api/game', routerGenerator(
       {
         route: '/',
         method: RouteMethod.post,
@@ -62,7 +61,7 @@ const port = process.env.PORT || 3000;
       }
     ))
 
-    server.use('/api/player', routerGenerator(
+    expressApp.use('/api/player', routerGenerator(
       {
         route: '/',
         method: RouteMethod.post,
@@ -81,7 +80,7 @@ const port = process.env.PORT || 3000;
       },
     ))
 
-    server.use('/api/word', routerGenerator(
+    expressApp.use('/api/word', routerGenerator(
       {
         route: '/',
         method: RouteMethod.get,
@@ -100,7 +99,7 @@ const port = process.env.PORT || 3000;
       }
     ))
 
-    server.use('/api/play', routerGenerator(
+    expressApp.use('/api/play', routerGenerator(
       {
         route: '/',
         method: RouteMethod.post,
@@ -111,7 +110,7 @@ const port = process.env.PORT || 3000;
       }
     ))
 
-    server.all("*", (req: Request, res: Response) => {
+    expressApp.all("*", (req: Request, res: Response) => {
       return handle(req, res);
     });
 
@@ -119,7 +118,6 @@ const port = process.env.PORT || 3000;
       if (err) throw err;
       console.log(`> Ready on localhost:${port} - env ${process.env.NODE_ENV}`);
     });
-    io.listen(8080);
   } catch (e) {
     console.error(e);
     process.exit(1);

@@ -1,8 +1,10 @@
+import express from "express";
 import { Server, Socket as SocketIoSocket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 
-const httpServer = require('http').createServer()
-export const io = new Server(httpServer, { cors: { origin: '*' }});
+export const app = express();
+export const server = require('http').createServer(app)
+export const io = new Server(server, { cors: { origin: '*' }});
 
 export type Socket = {
   _whoami?: string;
